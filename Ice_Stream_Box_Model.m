@@ -7,9 +7,10 @@
 %
 % See Ice_Stream_Box_Model_RHS for implementation of model equations.
 % 
-% Code written by Alex Robel, last update August, 2016
+% Code written by Alex Robel
 % Debugging help from Christian Schoof, Eli Tziperman, Eric DeGiuli and
 % Elisa Mantelli
+% Last updated for MATLAB 2018 by Colin Meyer, May 2018
 
 %% Set parameters
 p.year = 3600*24*365;   %seconds in a year
@@ -51,29 +52,43 @@ p.tspan=[0,p.year*t_final];     %time steps
 options = odeset('RelTol',1e-6,'AbsTol',1e-6);      %set ode integration settings
 [time,T] = ode45(@(t,X) Ice_Stream_Box_Model_RHS(t,X,p),p.tspan,p.ic,options);  %integrate box model
 
-%% Make some plots
+%% Diagnostic
+h = T(:,1);
+e = T(:,2);
+h_till = T(:,3);
+T_b = T(:,4);
+deltaT = p.T_s - T_b;               %difference between basal and surface ice temperature
+e(e>=p.e_c)=p.e_c;               %make sure till void ratio doesn't go below threshold
+h_till(h_till<=p.h_t_min) = p.h_t_min; h_till(h_till>=p.htill_init) = p.htill_init;  %make sure unfrozen till thickness stays within bounds
+T_b(T_b<=0)=0;      %make sure basal ice temperature never goes above zero
+
+tau_d = p.rho_i*p.g*(h.^2/p.L);        %calculate driving stress
+tau_f = p.tau0*exp(-p.c*e);         %calculate basal shear stress
+
+U = (p.A_f/256)*(p.W^(p.n+1))*(((tau_d-tau_f)./h).^p.n); U = max(U,0); %calculate centerline ice stream velocity
+% % Make some plots % %
 figure(1);set(1,'units','pixels','position',[0 0 1002 1202])
 subplot(5,1,1);
-plot(o.t(1:o.nt)./p.year,o.e(1:o.nt),'k','linewidth',2);hold on;
+plot(time./p.year,T(:,2),'k','linewidth',2);hold on;
 ylabel('Void Ratio','fontsize',16);
 set(gca,'fontsize',16)
 
 subplot(5,1,2);
-plot(o.t(1:o.nt)./p.year,o.h(1:o.nt),'k','linewidth',2);hold on;
+plot(time./p.year,T(:,1),'k','linewidth',2);hold on;
 ylabel('Ice Thickness (m)','fontsize',16);
 set(gca,'fontsize',16)
 
 subplot(5,1,3);
-plot(o.t(1:o.nt)./p.year,p.year.*o.u(1:o.nt),'k','linewidth',2);hold on;
+plot(time./p.year,p.year.*U,'k','linewidth',2);hold on;
 ylabel('Sliding Velocity (m/yr)','fontsize',16);
 set(gca,'fontsize',16)
 
 subplot(5,1,4);
-plot(o.t(1:o.nt)./p.year,o.htill(1:o.nt),'k','linewidth',2);hold on;
+plot(time./p.year,T(:,3),'k','linewidth',2);hold on;
 ylabel('Till Thickness (m)','fontsize',16);
 set(gca,'fontsize',16)
 
 subplot(5,1,5);
-plot(o.t(1:o.nt)./p.year,o.tb(1:o.nt),'k','linewidth',2);hold on;
+plot(time./p.year,T(:,4),'k','linewidth',2);hold on;
 ylabel('Basal Temp (K dep p-m)','fontsize',16);
 set(gca,'fontsize',16)
