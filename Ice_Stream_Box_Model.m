@@ -58,7 +58,7 @@ e = T(:,2);
 h_till = T(:,3);
 T_b = T(:,4);
 deltaT = p.T_s - T_b;               %difference between basal and surface ice temperature
-e(e>=p.e_c)=p.e_c;               %make sure till void ratio doesn't go below threshold
+e(e<=p.e_c)=p.e_c;               %make sure till void ratio doesn't go below threshold
 h_till(h_till<=p.h_t_min) = p.h_t_min; h_till(h_till>=p.htill_init) = p.htill_init;  %make sure unfrozen till thickness stays within bounds
 T_b(T_b<=0)=0;      %make sure basal ice temperature never goes above zero
 
