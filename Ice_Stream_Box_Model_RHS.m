@@ -9,9 +9,9 @@ function rhs=Ice_Stream_Box_Model_RHS(t,X,p)
 %
 % See Ice_Stream_Box_Model.m for model driver.
 % 
-% Code written by Alex Robel, last update August, 2016
+% Code written by Alex Robel, last update January, 2026
 % Debugging help from Christian Schoof, Eli Tziperman, Eric DeGiuli and
-% Elisa Mantelli
+% Elisa Mantelli, Joshua Grimstead
 
 persistent nt
 global o
@@ -69,7 +69,7 @@ if((h_till==h_t_min && T_b==0 && ((tau_f*U) + q_g - (K_i*deltaT/h))<0) || (h_til
     else if((e == e_c && h_till==p.htill_init && ((tau_f*U) + q_g - (K_i*deltaT/h))<0) ||  (e == e_c && h_till<p.htill_init))   %basal ice is temperate, till is partially frozen
         U=0;
         dedt = 0;
-        dhtdt = ((tau_f*U) + q_g - (K_i*deltaT/h))/(L_f*rho_i);
+        dhtdt = ((tau_f*U) + q_g - (K_i*deltaT/h))/(e_c.*L_f*rho_i); %bug fixed - found by Joshua Grimstead 2026
         dTbdt = 0;
         
         else                             %basal ice is temperate, till is thawed, void ratio varies

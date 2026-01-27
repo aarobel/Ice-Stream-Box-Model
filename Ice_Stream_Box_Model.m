@@ -9,20 +9,20 @@
 % 
 % Code written by Alex Robel
 % Debugging help from Christian Schoof, Eli Tziperman, Eric DeGiuli and
-% Elisa Mantelli
+% Elisa Mantelli, Joshua Grimstead
 % Last updated for MATLAB 2018 by Colin Meyer, May 2018
 
 %% Set parameters
 p.year = 3600*24*365;   %seconds in a year
-t_final = 1e4;          %total time of integration
+t_final = 2e4;          %total time of integration
 
 p.L=500e3;              %ice stream length
 p.W=40e3;               %ice stream width
 p.n=3;                  %nye-glen law exponent
-p.q_g = 0.07;           %geothermal heat flux
+p.q_g = 0.063;           %geothermal heat flux
 p.htill_init = 1;       %initial till thickness
 
-p.T_s=23;               %ice surface temperature
+p.T_s=23;               %ice surface temperature (below freezing)
 
 p.rho_i = 917;          %density of glacial ice
 p.L_f = 3.335e5;        %latent heat of fusion for ice
